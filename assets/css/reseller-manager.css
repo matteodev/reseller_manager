@@ -1,0 +1,29 @@
+/* Stili per i messaggi dei form reseller */
+.mpwp-reseller-message {
+    padding: 12px 16px;
+    margin: 0 0 16px;
+    border-radius: 6px;
+    border-left: 4px solid #2271b1;
+    background-color: #f0f6fc;
+    color: #1d2327;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.mpwp-reseller-message-error {
+    border-color: #d63638;
+    background-color: #fbeaea;
+    color: #742a2a;
+}
+
+.mpwp-reseller-message-success {
+    border-color: #00a32a;
+    background-color: #edf7ed;
+    color: #0a4b0a;
+}
+
+.mpwp-reseller-message-warning{
+    border-color: #f5a623;
+    background-color: #fff8e8;
+    color: #5a3a0a;
+}

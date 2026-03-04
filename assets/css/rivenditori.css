@@ -1,0 +1,4 @@
+p>label[for="account_first_name"], #account_first_name,
+p>label[for="account_last_name"], #account_last_name{
+	display:none;
+}

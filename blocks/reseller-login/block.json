@@ -1,0 +1,16 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "mc-reseller-manager/reseller-login",
+    "version": "1.0.0",
+    "title": "Login Rivenditore",
+    "category": "text",
+    "icon": "unlock",
+    "description": "Form di login per rivenditori, equivalente allo shortcode [mcwp_reseller_auth].",
+    "textdomain": "mc-reseller-manager",
+    "supports": {
+        "html": false
+    },
+    "editorScript": "file:./index.js",
+    "render": "file:./render.php"
+}

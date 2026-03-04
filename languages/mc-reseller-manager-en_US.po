@@ -1,0 +1,464 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: mc-reseller-manager 1.0.0\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: mc-reseller-manager\n"
+
+#: reseller-manager.php
+msgid "\"%1$s\" necessita che \"%2$s\" sia installato e attivo per poter funzionare."
+msgstr "\"%1$s\" requires \"%2$s\" to be installed and active to work."
+
+#: reseller-manager.php
+msgid "Reseller Manager"
+msgstr "Reseller Manager"
+
+#: reseller-manager.php
+msgid "Woocommerce"
+msgstr "WooCommerce"
+
+#: pages/admin-add.php pages/admin-settings.php
+msgid "Non hai i permessi per accedere a questa pagina."
+msgstr "You do not have permission to access this page."
+
+#: pages/admin-add.php class/class-reseller-manager.php
+msgid "Compila tutti i campi richiesti."
+msgstr "Please fill in all required fields."
+
+#: pages/admin-add.php class/class-reseller-manager.php
+msgid "Inserisci un indirizzo email valido."
+msgstr "Enter a valid email address."
+
+#: pages/admin-add.php class/class-reseller-manager.php
+msgid "Questa email e gia registrata."
+msgstr "This email is already registered."
+
+#: pages/admin-add.php
+msgid "Rivenditore creato con successo. %1$sApri profilo%2$s."
+msgstr "Reseller created successfully. %1$sOpen profile%2$s."
+
+#: pages/admin-add.php
+msgid "Utente creato ma impossibile inviare l'email di impostazione password. Invia manualmente il link di reset."
+msgstr "User created but the password setup email could not be sent. Send the reset link manually."
+
+#: pages/admin-add.php class/class-reseller-manager.php
+msgid "Utente creato ma impossibile generare il link per impostare la password."
+msgstr "User created but the link to set the password could not be generated."
+
+#: pages/admin-add.php pages/admin-settings.php
+msgid "Aggiungi nuovo rivenditore"
+msgstr "Add new reseller"
+
+#: pages/admin-add.php pages/reseller-profile.php
+msgid "Torna alla lista"
+msgstr "Back to list"
+
+#: pages/admin-add.php pages/reseller-profile.php
+msgid "Nome/Ragione sociale"
+msgstr "Name/Company name"
+
+#: shortcodes/reseller-signup.php
+msgid "Nome / Ragione sociale"
+msgstr "Name / Company name"
+
+#: pages/admin-add.php
+msgid "Email rivenditore"
+msgstr "Reseller email"
+
+#: pages/admin-add.php
+msgid "Codice fiscale"
+msgstr "Tax code"
+
+#: class/class-reseller-manager.php
+msgid "Codice Fiscale"
+msgstr "Tax code"
+
+#: shortcodes/reseller-signup.php
+msgid "opzionale"
+msgstr "optional"
+
+#: pages/admin-add.php pages/reseller-profile.php
+msgid "Partita IVA"
+msgstr "VAT number"
+
+#: pages/admin-add.php pages/reseller-profile.php
+msgid "Stato"
+msgstr "Status"
+
+#: pages/admin-add.php pages/reseller-profile.php class/class-reseller-table.php
+msgid "Abilitato"
+msgstr "Enabled"
+
+#: pages/admin-add.php pages/reseller-profile.php class/class-reseller-table.php
+msgid "Disabilitato"
+msgstr "Disabled"
+
+#: class/class-reseller-table.php
+msgid "Nome"
+msgstr "Name"
+
+#: class/class-reseller-table.php
+msgid "Azioni"
+msgstr "Actions"
+
+#: class/class-reseller-table.php
+msgid "Visualizza profilo"
+msgstr "View profile"
+
+#: class/class-reseller-table.php pages/reseller-profile.php
+msgid "Elimina"
+msgstr "Delete"
+
+#: pages/admin-add.php
+msgid "Imposta se il rivenditore puo accedere subito."
+msgstr "Choose whether the reseller can log in immediately."
+
+#: pages/admin-add.php
+msgid "Se abilitato verrà inviata una mail automatica per la creazione della password."
+msgstr "If enabled, an automatic email to set the password will be sent."
+
+#: pages/admin-add.php
+msgid "Altrimenti la riceverà quando verrà abilitato."
+msgstr "Otherwise they will receive it when their account is enabled."
+
+#: pages/admin-add.php
+msgid "Aggiungi Rivenditore"
+msgstr "Add Reseller"
+
+#: class/class-reseller-manager.php
+msgid "Sconto Rivenditore"
+msgstr "Reseller Discount"
+
+#: class/class-reseller-manager.php
+msgid "Si e' verificato un problema di sicurezza. Ricarica la pagina e riprova."
+msgstr "A security issue occurred. Reload the page and try again."
+
+#: class/class-reseller-manager.php
+msgid "Errore durante l'iscrizione. Riprova piu' tardi."
+msgstr "Error during signup. Please try again later."
+
+#: class/class-reseller-manager.php
+msgid "Errore di convalida. Aggiorna la pagina e riprova."
+msgstr "Validation error. Refresh the page and try again."
+
+#: class/class-reseller-manager.php
+msgid "Inserisci email e password."
+msgstr "Enter email and password."
+
+#: class/class-reseller-manager.php
+msgid "Il tuo account rivenditore non è ancora stato approvato. Riprova più tardi."
+msgstr "Your reseller account has not been approved yet. Please try again later."
+
+#: class/class-reseller-manager.php
+msgid "Account Abilitato - %s"
+msgstr "Account Enabled - %s"
+
+#: class/class-reseller-manager.php
+msgid "Gentile %s,\n\nIl suo account rivenditore è stato abilitato con successo.\n\nGrazie.\n"
+msgstr "Dear %s,\n\nYour reseller account has been successfully enabled.\n\nThank you.\n"
+
+#: class/class-reseller-manager.php
+msgid "Gentile %s,\n\nIl suo account rivenditore è stato abilitato con successo.\n\n"
+msgstr "Dear %s,\n\nYour reseller account has been successfully enabled.\n\n"
+
+#: class/class-reseller-manager.php
+msgid "Per impostare la password, clicca sul seguente link: %s"
+msgstr "To set your password, click the following link: %s"
+
+#: class/class-reseller-manager.php
+msgid "\n\nGrazie.\n"
+msgstr "\n\nThanks.\n"
+
+#: class/class-reseller-manager.php
+msgid "Credenziali errate. Riprova."
+msgstr "Invalid credentials. Please try again."
+
+#: class/class-reseller-manager.php
+msgid "Non autorizzato"
+msgstr "Unauthorized"
+
+#: class/class-reseller-manager.php
+msgid "Parametro mancante"
+msgstr "Missing parameter"
+
+#: class/class-reseller-manager.php
+msgid "Email disponibile."
+msgstr "Email available."
+
+#: class/class-reseller-manager.php
+msgid "Email gia registrata."
+msgstr "Email already registered."
+
+#: class/class-reseller-manager.php
+msgid "Nome gia usato da un rivenditore."
+msgstr "Name already used by another reseller."
+
+#: class/class-reseller-manager.php
+msgid "Nome disponibile."
+msgstr "Name available."
+
+#: class/class-reseller-manager.php
+msgid "Campo non supportato"
+msgstr "Field not supported"
+
+#: pages/admin-settings.php
+msgid "Impostazioni"
+msgstr "Settings"
+
+#: pages/admin-settings.php
+msgid "Rivenditori"
+msgstr "Resellers"
+
+#: pages/admin-settings.php
+msgid "Aggiungi nuovo"
+msgstr "Add new"
+
+#: pages/admin-settings.php
+msgid "Impostazioni salvate."
+msgstr "Settings saved."
+
+#: pages/admin-settings.php
+msgid "Spuntando questa opzione i prezzi ai rivenditori, verranno mostrati come da listino originale, lo sconto verrà applicato in fase di acquisto. Altrimenti viene mostrato direttamente il prezzo rivenditore"
+msgstr "When checked, reseller prices are shown at list price and the discount is applied at checkout. Otherwise the reseller price is shown directly."
+
+#: pages/admin-settings.php
+msgid "Non sarà possibile assegnare un prezzo speciale ai prodotti del catalogo"
+msgstr "You will not be able to assign special prices to catalog products"
+
+#: pages/admin-settings.php
+msgid "Mostra sconto rivenditore solo in fase di acquisto"
+msgstr "Show reseller discount only at checkout"
+
+#: pages/admin-settings.php
+msgid "Spuntando questa opzione lo sconto verrà calcolato sul prezzo originale, altrimenti verrà calcolato sul prezzo già scontato"
+msgstr "When checked, the discount is calculated on the original price; otherwise it is calculated on the already discounted price."
+
+#: pages/admin-settings.php
+msgid "Calcola sconto globale sul prezzo originale"
+msgstr "Calculate global discount on the original price"
+
+#: pages/admin-settings.php
+msgid "Salva"
+msgstr "Save"
+
+#: class/class-reseller-table.php
+msgid "ID #%d"
+msgstr "ID #%d"
+
+#: class/class-reseller-table.php pages/reseller-profile.php
+msgid "Abilita"
+msgstr "Enable"
+
+#: class/class-reseller-table.php pages/reseller-profile.php
+msgid "Disabilita"
+msgstr "Disable"
+
+#: class/class-reseller-table.php
+msgid "abilitare"
+msgstr "enable"
+
+#: class/class-reseller-table.php
+msgid "disabilitare"
+msgstr "disable"
+
+#: class/class-reseller-table.php
+msgid "eliminare"
+msgstr "delete"
+
+#: class/class-reseller-table.php
+msgid "Sei sicuro?"
+msgstr "Are you sure?"
+
+#: class/class-reseller-table.php
+msgid "Vuoi davvero %1$s il rivenditore \"%2$s\"?"
+msgstr "Do you really want to %1$s the reseller \"%2$s\"?"
+
+#: class/class-reseller-table.php
+msgid "Annulla"
+msgstr "Cancel"
+
+#: pages/admin-view.php
+msgid "Rivenditore abilitato con successo"
+msgstr "Reseller enabled successfully"
+
+#: pages/admin-view.php
+msgid "Rivenditore disabilitato con successo"
+msgstr "Reseller disabled successfully"
+
+#: pages/admin-view.php
+msgid "Rivenditore eliminato con successo"
+msgstr "Reseller deleted successfully"
+
+#: pages/admin-view.php
+msgid "Per mostrare la login e l'accesso del rivenditore, inserisci questi shortcode:"
+msgstr "To show the reseller login and access, insert these shortcodes:"
+
+#: pages/admin-view.php
+msgid "<code>[mcwp_reseller_signup]</code> per il form di registrazione"
+msgstr "<code>[mcwp_reseller_signup]</code> for the registration form"
+
+#: pages/admin-view.php
+msgid "<code>[mcwp_reseller_auth]</code> per il form di accesso"
+msgstr "<code>[mcwp_reseller_auth]</code> for the login form"
+
+#: pages/admin-view.php
+msgid "Oppure puoi usare il sistema a blocchi del editor di WordPress Gutenberg."
+msgstr "Or you can use the Gutenberg block editor."
+
+#: blocks/reseller-login/index.js
+msgid "Login Rivenditore"
+msgstr "Reseller Login"
+
+#: shortcodes/reseller-login.php pages/reseller-profile.php
+msgid "Email"
+msgstr "Email"
+
+#: shortcodes/reseller-login.php shortcodes/reseller-signup.php
+msgid "Password"
+msgstr "Password"
+
+#: shortcodes/reseller-login.php
+msgid "Ricordami"
+msgstr "Remember me"
+
+#: shortcodes/reseller-login.php
+msgid "Accedi"
+msgstr "Login"
+
+#: blocks/reseller-login/index.js
+msgid "Mostra il form di accesso rivenditori."
+msgstr "Show the reseller login form."
+
+#: blocks/reseller-signup/index.js
+msgid "Registrazione Rivenditore"
+msgstr "Reseller Registration"
+
+#: shortcodes/reseller-signup.php
+msgid "Iscriviti"
+msgstr "Sign up"
+
+#: blocks/reseller-signup/index.js
+msgid "Mostra il form di iscrizione rivenditori."
+msgstr "Show the reseller signup form."
+
+#: pages/reseller-profile.php
+msgid "Sconto aggiornato con successo."
+msgstr "Discount updated successfully."
+
+#: pages/reseller-profile.php
+msgid "Prezzi speciali aggiornati con successo."
+msgstr "Special prices updated successfully."
+
+#: pages/reseller-profile.php
+msgid "Sei sicuro di voler eliminare questo reseller?"
+msgstr "Are you sure you want to delete this reseller?"
+
+#: pages/reseller-profile.php
+msgid "Attenzione: è attiva l'opzione per mostrare il prezzo orginale e lo sconto solo in fase di acquisto, quindi non è possibile assegnare un prezzo speciale ai prodotti."
+msgstr "Warning: the option to show the original price and apply the discount only at checkout is enabled, so you cannot assign a special price to products."
+
+#: pages/reseller-profile.php
+msgid "Disabilita l'opzione in impostazioni"
+msgstr "Disable the option in settings"
+
+#: pages/reseller-profile.php
+msgid "Profilo Rivenditore"
+msgstr "Reseller Profile"
+
+#: pages/reseller-profile.php
+msgid "Registrato il"
+msgstr "Registered on"
+
+#: pages/reseller-profile.php
+msgid "Gestisci sconto"
+msgstr "Manage discount"
+
+#: pages/reseller-profile.php
+msgid "Sconto globale"
+msgstr "Global discount"
+
+#: pages/reseller-profile.php
+msgid "Lo sconto verrà applicato al prezzo originale, eventuali sconti sui prodotti verranno ignorati.\n                                Puoi decidere di applicare lo sconto rivenditore considerando il prezzo scontato, disabilitando l'opzione in Impostazioni"
+msgstr "The discount will be applied to the original price; any existing product discounts will be ignored.\nYou can apply the reseller discount on the sale price by disabling the option in Settings."
+
+#: pages/reseller-profile.php
+msgid "Lo sconto verrà applicato anche al prezzo di prodotti che hanno già uno sconto applicato. \n                                Puoi decidere di applicare lo sconto rivenditore al prezzo di listino, abilitando l'opzione in Impostazioni"
+msgstr "The discount will also be applied to products that already have a discount.\nYou can apply the reseller discount on the list price by enabling the option in Settings."
+
+#: pages/reseller-profile.php
+msgid "Aggiorna sconto"
+msgstr "Update discount"
+
+#: pages/reseller-profile.php
+msgid "Azioni account"
+msgstr "Account actions"
+
+#: pages/reseller-profile.php
+msgid "Gestisci lo stato del rivenditore oppure rimuovilo definitivamente."
+msgstr "Manage the reseller status or remove them permanently."
+
+#: pages/reseller-profile.php
+msgid "Prezzo speciale sul prodotto"
+msgstr "Special price on product"
+
+#: pages/reseller-profile.php
+msgid "Puoi applicare un prezzo dedicato per questo rivenditore. Lo sconto globale verrà ignorato se viene assegnato un prezzo speciale al prodotto"
+msgstr "You can set a dedicated price for this reseller. The global discount will be ignored if a special product price is set."
+
+#: pages/reseller-profile.php
+msgid "Cerca prodotti"
+msgstr "Search products"
+
+#: pages/reseller-profile.php
+msgid "Cerca prodotti..."
+msgstr "Search products..."
+
+#: pages/reseller-profile.php
+msgid "Cerca"
+msgstr "Search"
+
+#: pages/reseller-profile.php
+msgid "Reset"
+msgstr "Reset"
+
+#: pages/reseller-profile.php
+msgid "Prodotto"
+msgstr "Product"
+
+#: pages/reseller-profile.php
+msgid "Prezzo pubblico"
+msgstr "Public price"
+
+#: pages/reseller-profile.php
+msgid "Prezzo speciale rivenditore"
+msgstr "Reseller special price"
+
+#: pages/reseller-profile.php
+msgid "Salva prezzi speciali"
+msgstr "Save special prices"
+
+#: pages/reseller-profile.php
+msgid "Nessun prodotto trovato."
+msgstr "No products found."
+
+#: shortcodes/reseller-login.php
+msgid "Accedi"
+msgstr "Login"
+
+#: shortcodes/reseller-login.php
+msgid "Ricordami"
+msgstr "Remember me"
+
+#: shortcodes/reseller-login.php shortcodes/reseller-signup.php
+msgid "Password"
+msgstr "Password"
+
+#: shortcodes/reseller-signup.php
+msgid "Iscriviti"
+msgstr "Sign up"
+
+#: class/class-reseller-manager.php
+msgid "Registrazione completata. Il tuo account è in approvazione e riceverai una conferma quando sarà attivato."
+msgstr "Registration completed. Your reseller account is pending approval and you will receive confirmation when it is activated."
