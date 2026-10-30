@@ -1,5 +1,10 @@
 # Current audit status — 2026-10-30
 
+Case-study follow-up: added the GPL license text, a Docker test workflow validated
+with actionlint, and [screenshots with a fresh successful local test log](case-study/README.md).
+The workflow is configured; its execution on GitHub must be checked after push.
+No claim of a successful remote CI run is made.
+
 The initial findings below are historical. A follow-up integration increment has
 reproduced and corrected the listed authorization, pricing and form defects.
 
@@ -40,7 +45,7 @@ The tested matrix is WordPress 7.0 / WooCommerce 11.2.1, CLI PHP 8.3.33 and web 
 8.2.31. Legacy version claims were removed from README rather than advertised as
 verified. Tax/coupon combinations, variation/grouped price ranges, Store API,
 multisite, email delivery/reset links, third-party pricing plugins, large datasets,
-CI and a complete security review remain future work. AJAX/admin input paths beyond
+a confirmed remote CI run and a complete security review remain future work. AJAX/admin input paths beyond
 the exercised scenarios have not received exhaustive malformed-input coverage.
 No production site was accessed or modified. Do not transfer this demo to matcode.dev
 before validating its actual stack and the remaining integration limits.

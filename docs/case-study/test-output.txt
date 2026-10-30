@@ -1,0 +1,149 @@
+ Container reseller_manager-tests-run-238b957f1f8e Creating 
+ Container reseller_manager-tests-run-238b957f1f8e Created 
+No syntax errors detected in /app/blocks/reseller-login/index.asset.php
+No syntax errors detected in /app/blocks/reseller-login/render.php
+No syntax errors detected in /app/blocks/reseller-signup/index.asset.php
+No syntax errors detected in /app/blocks/reseller-signup/render.php
+No syntax errors detected in /app/class/class-reseller-manager.php
+No syntax errors detected in /app/class/class-reseller-table.php
+No syntax errors detected in /app/pages/admin-add.php
+No syntax errors detected in /app/pages/admin-settings.php
+No syntax errors detected in /app/pages/admin-view.php
+No syntax errors detected in /app/pages/reseller-profile.php
+No syntax errors detected in /app/reseller-manager.php
+No syntax errors detected in /app/shortcodes/reseller-login.php
+No syntax errors detected in /app/shortcodes/reseller-signup.php
+No syntax errors detected in /app/tests/signup.php
+No syntax errors detected in /app/tests/integration.php
+No syntax errors detected in /app/tests/http.php
+No syntax errors detected in /app/tests/lint.php
+PASS: PHP syntax in 17 files
+ Container reseller_manager-tests-run-19257d13554f Creating 
+ Container reseller_manager-tests-run-19257d13554f Created 
+PASS: form field names are unique
+PASS: form submits mpwp-reseller-signup-name
+PASS: form submits mpwp-reseller-signup-cf
+PASS: form submits mpwp-reseller-signup-piva
+PASS: form submits mpwp-reseller-signup-email
+PASS: form submits mpwp-reseller-signup-password
+PASS: invalid nonce does not create a user
+PASS: rendered form contract creates user
+PASS: signup assigns reseller role
+PASS: fiscal code preserved
+PASS: VAT field stays independent
+PASS: signup requires approval
+ Network reseller-tests-55359_default Creating 
+ Volume reseller-tests-55359_test-db Creating 
+ Volume reseller-tests-55359_test-wp Creating 
+ Volume reseller-tests-55359_test-db Creating 
+ Volume reseller-tests-55359_test-wp Creating 
+ Network reseller-tests-55359_default Creating 
+ Volume reseller-tests-55359_test-db Created 
+ Volume reseller-tests-55359_test-db Created 
+ Volume reseller-tests-55359_test-wp Created 
+ Volume reseller-tests-55359_test-wp Created 
+ Network reseller-tests-55359_default Created 
+ Network reseller-tests-55359_default Created 
+ Container reseller-tests-55359-db-1 Creating 
+ Container reseller-tests-55359-db-1 Created 
+ Container reseller-tests-55359-wordpress-1 Creating 
+ Container reseller-tests-55359-wordpress-1 Created 
+ Container reseller-tests-55359-db-1 Starting 
+ Container reseller-tests-55359-db-1 Started 
+ Container reseller-tests-55359-db-1 Waiting 
+ Container reseller-tests-55359-db-1 Healthy 
+ Container reseller-tests-55359-wordpress-1 Starting 
+ Container reseller-tests-55359-wordpress-1 Started 
+ Container reseller-tests-55359-db-1 Waiting 
+ Container reseller-tests-55359-wordpress-1 Waiting 
+ Container reseller-tests-55359-db-1 Healthy 
+ Container reseller-tests-55359-wordpress-1 Healthy 
+ Container reseller-tests-55359-db-1 Running 
+ Container reseller-tests-55359-db-1 Waiting 
+ Container reseller-tests-55359-db-1 Healthy 
+ Container reseller-tests-55359-cli-run-5a63f2d94f74 Creating 
+ Container reseller-tests-55359-cli-run-5a63f2d94f74 Created 
+Success: WordPress installed successfully.
+ Container reseller-tests-55359-db-1 Running 
+ Container reseller-tests-55359-db-1 Waiting 
+ Container reseller-tests-55359-db-1 Healthy 
+ Container reseller-tests-55359-cli-run-7d5b9a917987 Creating 
+ Container reseller-tests-55359-cli-run-7d5b9a917987 Created 
+Installing WooCommerce (11.2.1)
+Downloading installation package from https://downloads.wordpress.org/plugin/woocommerce.11.2.1.zip...
+Unpacking the package...
+Installing the plugin...
+Plugin installed successfully.
+Activating 'woocommerce'...
+Plugin 'woocommerce' activated.
+Success: Installed 1 of 1 plugins.
+ Container reseller-tests-55359-db-1 Running 
+ Container reseller-tests-55359-db-1 Waiting 
+ Container reseller-tests-55359-db-1 Healthy 
+ Container reseller-tests-55359-cli-run-0826302b844b Creating 
+ Container reseller-tests-55359-cli-run-0826302b844b Created 
+Plugin 'reseller_manager' activated.
+Success: Activated 1 of 1 plugins.
+ Container reseller-tests-55359-db-1 Running 
+ Container reseller-tests-55359-db-1 Waiting 
+ Container reseller-tests-55359-db-1 Healthy 
+ Container reseller-tests-55359-cli-run-2bbcf9ee7e9d Creating 
+ Container reseller-tests-55359-cli-run-2bbcf9ee7e9d Created 
+PASS: HTTP page renders both reseller forms
+PASS: HTTP signup rejects invalid nonce
+PASS: HTTP signup creates pending account
+PASS: HTTP signup preserves independent fiscal fields
+PASS: HTTP pending reseller cannot log in
+PASS: HTTP wrong password receives no login cookie
+PASS: HTTP approved reseller receives redirect and login cookie
+Success: 7 HTTP cases passed; web PHP runtime PHP/8.2.31
+ Container reseller-tests-55359-db-1 Running 
+ Container reseller-tests-55359-db-1 Waiting 
+ Container reseller-tests-55359-db-1 Healthy 
+ Container reseller-tests-55359-cli-run-0a0deeaa242e Creating 
+ Container reseller-tests-55359-cli-run-0a0deeaa242e Created 
+PASS: subscriber cannot read reseller profile
+PASS: subscriber cannot change discount with their own valid nonce
+PASS: administrator cannot target a non-reseller profile
+PASS: invalid profile nonce cannot write
+PASS: paginated custom price save preserves other products
+PASS: custom cart price is numeric and every row gets processed
+PASS: cart recalculation is idempotent and preserves regular price
+PASS: zero global discount still applies custom price
+PASS: disabled reseller receives no custom cart price
+PASS: non-reseller metadata does not grant discounts
+PASS: catalog formatting never mutates regular price
+PASS: sale price filter returns numeric custom price
+PASS: regular-price option calculates discount from list price
+PASS: real cart totals use both reseller prices and remain stable
+PASS: full-price mode charges one global discount
+PASS: disabled reseller receives no full-price discount
+PASS: shortcode returns form without leaking output
+PASS: real signup preserves password and creates pending reseller
+PASS: profile renders independent, balanced forms including discount nonce
+PASS: subscriber cannot approve reseller using valid nonce
+PASS: administrator cannot disable a non-reseller user
+PASS: administrator approves reseller and login accepts original password
+PASS: disabled reseller login is denied
+PASS: non-reseller login is denied even with enabled metadata
+PASS: malformed signup scalar input is rejected without exception
+PASS: Gutenberg blocks render signup and login forms
+PASS: repeated shortcodes each return a form
+PASS: array inputs do not crash frontend form rendering
+PASS: uninstall preserves accounts and unrelated metadata without SQL errors
+Environment: WordPress 7.0, WooCommerce 11.2.1, PHP 8.3.33
+Success: 29 integration cases passed.
+ Container reseller-tests-55359-wordpress-1 Stopping 
+ Container reseller-tests-55359-wordpress-1 Stopped 
+ Container reseller-tests-55359-wordpress-1 Removing 
+ Container reseller-tests-55359-wordpress-1 Removed 
+ Container reseller-tests-55359-db-1 Stopping 
+ Container reseller-tests-55359-db-1 Stopped 
+ Container reseller-tests-55359-db-1 Removing 
+ Container reseller-tests-55359-db-1 Removed 
+ Volume reseller-tests-55359_test-db Removing 
+ Volume reseller-tests-55359_test-wp Removing 
+ Network reseller-tests-55359_default Removing 
+ Volume reseller-tests-55359_test-db Removed 
+ Network reseller-tests-55359_default Removed 
+ Volume reseller-tests-55359_test-wp Removed 

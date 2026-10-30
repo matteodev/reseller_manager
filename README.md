@@ -4,6 +4,8 @@ A demonstration WooCommerce add-on by [matteodev](https://matcode.dev) for resel
 signup, account approval and dedicated prices. This is an educational project,
 not production-ready software or a hosted service.
 
+Read the [technical case study with screenshots and test evidence](docs/case-study/README.md).
+
 ## Implemented features
 
 - Signup and login forms through `[mcwp_reseller_signup]` and `[mcwp_reseller_auth]`,
@@ -88,7 +90,7 @@ links are not verified. The integration suite invokes uninstall cleanup directly
 not WordPress's complete plugin-deletion UI.
 
 Not yet verified: multisite lifecycle, older WordPress/PHP/WooCommerce versions,
-browser automation, variable/grouped price ranges, variation-specific pricing UI,
+a full browser regression suite, variable/grouped price ranges, variation-specific pricing UI,
 Store API/Checkout Blocks, advanced tax/coupon/shipping combinations, external
 pricing plugins, large reseller datasets and a comprehensive security review.
 The classic cart tests use simple products. Variable/grouped catalog range HTML
@@ -98,13 +100,15 @@ other plugins that change prices dynamically.
 ## Roadmap and project details
 
 Next: extend the compatibility/test matrix, cover variable products and Store API,
-validate taxes/coupons and email delivery, then automate the Docker runner in CI.
+validate taxes/coupons and email delivery.
+The [Docker tests workflow](.github/workflows/docker-tests.yml) now runs the same
+local runner on push and pull requests and preserves its output. Its syntax has
+been validated with actionlint; check GitHub Actions after pushing for the remote result.
 See [audit history and current findings](docs/AUDIT.md). Suggested GitHub topics:
 `wordpress`, `woocommerce`, `php`, `demo`.
 
 - Entry point: `reseller-manager.php`; core: `class/class-reseller-manager.php`.
 - Administrative pages: `pages/`; forms: `shortcodes/`; blocks: `blocks/`.
 - Text domain: `mc-reseller-manager`; translations: `languages/`.
-- License declared in plugin metadata: GPLv2 or later; a standalone license text
-  and a complete license review remain documentation work.
+- License: [GPLv2 or later (GPL-2.0-or-later)](LICENSE), matching the existing plugin metadata.
 - [Report issues](https://github.com/matteodev/reseller_manager/issues).
