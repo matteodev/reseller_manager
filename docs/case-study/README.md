@@ -28,7 +28,8 @@ riproduzioni, correzioni e limiti.
 
 Esecuzione locale del 30 ottobre 2026: **12 assert del modulo, 29 casi di integrazione,
 7 casi HTTP**, tutti superati; lint su **17 file PHP**. L'[output integrale](test-output.txt)
-è quello catturato dal runner, senza sostituire il risultato con un report simulato.
+è quello catturato dal runner: sono stati rimossi soltanto gli spazi di fine riga
+emessi da Compose, senza alterare messaggi o risultati.
 Il codice applicativo verificato corrisponde alla
 [revisione 3f4e199](https://github.com/matteodev/reseller_manager/tree/3f4e199904922f8fb88ca665f9822cdb1d2422ed).
 Gli incrementi successivi aggiungono licenza, CI, documentazione e strumenti di acquisizione.
