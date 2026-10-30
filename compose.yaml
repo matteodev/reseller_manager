@@ -1,6 +1,6 @@
 services:
   tests:
-    image: wordpress:cli-php8.3
+    image: wordpress:cli-php8.3@sha256:2b5e9d4d3e51909dca1aaa4732e9f5e5bf0377c2114dbd8ff39f060bff202586
     entrypoint: ["php"]
     command: ["/app/tests/signup.php"]
     working_dir: /app

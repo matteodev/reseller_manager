@@ -1,6 +1,6 @@
 services:
   db:
-    image: mariadb:10.11
+    image: mariadb:10.11@sha256:07c0aaff7396b74cb7975cba78257178d188e30f531a5db2b617c48beef13c41
     environment:
       MARIADB_ROOT_PASSWORD: local-tests-only
       MARIADB_DATABASE: reseller_tests
@@ -14,12 +14,17 @@ services:
       timeout: 5s
       retries: 30
   wordpress:
-    image: wordpress:php8.2-apache
+    image: wordpress:php8.2-apache@sha256:e9a115cac7913b00781e27f2aeda086008e9fb09587bf919400e469cbda56f89
     environment: &wp-env
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: reseller_tests
       WORDPRESS_DB_USER: reseller
       WORDPRESS_DB_PASSWORD: local-tests-only
+    healthcheck:
+      test: [CMD, php, -r, "exit(is_file('/var/www/html/wp-config.php') ? 0 : 1);"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
     volumes: &wp-volumes
       - test-wp:/var/www/html
       - .:/var/www/html/wp-content/plugins/reseller_manager:ro
@@ -27,10 +32,12 @@ services:
       db:
         condition: service_healthy
   cli:
-    image: wordpress:cli-php8.3
+    image: wordpress:cli-php8.3@sha256:2b5e9d4d3e51909dca1aaa4732e9f5e5bf0377c2114dbd8ff39f060bff202586
     entrypoint: [wp]
     user: '33:33'
-    environment: *wp-env
+    environment:
+      <<: *wp-env
+      WP_CLI_CACHE_DIR: /tmp/wp-cli-cache
     volumes: *wp-volumes
     depends_on:
       db:
