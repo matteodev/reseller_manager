@@ -137,12 +137,72 @@ verify_case('shortcode returns form without leaking output', function () {
     expect_true($leaked === '' && strpos($value, '<form') !== false, 'shortcode emitted output instead of returning it');
 });
 verify_case('real signup preserves password and creates pending reseller', function () use ($tag) {
-    $_POST = wp_slash(['mpwp_reseller_action'=>'signup', 'mpwp_reseller_nonce'=>wp_create_nonce('mpwp_reseller_signup'), 'mpwp-reseller-signup-name'=>'Demo', 'mpwp-reseller-signup-email'=>$tag.'signup@example.test', 'mpwp-reseller-signup-password'=>' pass<word>\\"123! ', 'mpwp-reseller-signup-cf'=>'CF', 'mpwp-reseller-signup-piva'=>'VAT']);
+    $_POST = wp_slash(['mpwp_reseller_action'=>'signup', 'mpwp_reseller_nonce'=>wp_create_nonce('mpwp_reseller_signup'), 'mpwp-reseller-signup-name'=>'Demo', 'mpwp-reseller-signup-email'=>$tag.'signup@example.test', 'mpwp-reseller-signup-password'=>'pass<word>\\"123!', 'mpwp-reseller-signup-cf'=>'CF', 'mpwp-reseller-signup-piva'=>'VAT']);
     Reseller_Manager::handle_shortcode_form(); $user = get_user_by('email', $tag.'signup@example.test');
-    expect_true($user && wp_check_password(' pass<word>\\"123! ', $user->user_pass, $user->ID), 'password changed or signup failed');
+    expect_true($user && wp_check_password('pass<word>\\"123!', $user->user_pass, $user->ID), 'password changed or signup failed');
     expect_true(get_user_meta($user->ID, 'mpwp_reseller_status', true) === 'disabled', 'signup not pending');
     wp_delete_user($user->ID); $_POST = [];
 });
+verify_case('profile renders independent, balanced forms including discount nonce', function () use ($admin, $reseller) {
+    wp_set_current_user($admin); $html = profile_request($reseller); $depth = 0;
+    preg_match_all('/<\/?form\b[^>]*>/', $html, $tags);
+    foreach ($tags[0] as $tag) { $depth += strpos($tag, '</') === 0 ? -1 : 1; expect_true($depth >= 0 && $depth <= 1, 'nested/unbalanced form'); }
+    expect_true($depth === 0 && strpos($html, 'name="mpwp_reseller_discount_nonce"') !== false, 'missing discount form/nonce');
+});
+require_once dirname(__DIR__).'/class/class-reseller-table.php';
+class Reseller_Test_Redirect extends RuntimeException {}
+add_filter('wp_redirect', function ($url) { throw new Reseller_Test_Redirect($url); });
+verify_case('subscriber cannot approve reseller using valid nonce', function () use ($customer, $reseller) {
+    wp_set_current_user($customer); update_user_meta($reseller, 'mpwp_reseller_status', 'disabled');
+    $_GET = ['action'=>'enable', 'id'=>$reseller, 'confirm'=>'1', '_wpnonce'=>wp_create_nonce('enable_reseller_'.$reseller)];
+    try { Reseller_Table::handle_action(); } catch (Reseller_Test_Denied $e) {} catch (Reseller_Test_Redirect $e) {}
+    expect_true(get_user_meta($reseller, 'mpwp_reseller_status', true) === 'disabled', 'subscriber approved reseller');
+});
+verify_case('administrator cannot disable a non-reseller user', function () use ($admin, $customer) {
+    wp_set_current_user($admin); update_user_meta($customer, 'mpwp_reseller_status', 'enabled');
+    $_GET = ['action'=>'disable', 'id'=>$customer, 'confirm'=>'1', '_wpnonce'=>wp_create_nonce('disable_reseller_'.$customer)];
+    try { Reseller_Table::handle_action(); } catch (Reseller_Test_Denied $e) {} catch (Reseller_Test_Redirect $e) {}
+    expect_true(get_user_meta($customer, 'mpwp_reseller_status', true) === 'enabled', 'non-reseller target was changed');
+});
+verify_case('administrator approves reseller and login accepts original password', function () use ($admin, $reseller, $tag) {
+    wp_set_current_user($admin);
+    $_GET = ['action'=>'enable', 'id'=>$reseller, 'confirm'=>'1', '_wpnonce'=>wp_create_nonce('enable_reseller_'.$reseller)];
+    try { Reseller_Table::handle_action(); } catch (Reseller_Test_Redirect $e) {}
+    expect_true(get_user_meta($reseller, 'mpwp_reseller_status', true) === 'enabled', 'approval did not persist');
+    wp_set_current_user(0);
+    $_POST = wp_slash(['mpwp_reseller_action'=>'login', 'mpwp_reseller_nonce'=>wp_create_nonce('mpwp_reseller_login'), 'login_email'=>$tag.'reseller@example.test', 'login_password'=>'Test-local-123!']);
+    try { Reseller_Manager::handle_shortcode_form(); } catch (Reseller_Test_Redirect $e) {}
+    expect_true(get_current_user_id() === $reseller, 'enabled reseller login failed'); $_POST = [];
+});
+verify_case('disabled reseller login is denied', function () use ($reseller, $tag) {
+    update_user_meta($reseller, 'mpwp_reseller_status', 'disabled'); wp_set_current_user(0);
+    $_POST = wp_slash(['mpwp_reseller_action'=>'login', 'mpwp_reseller_nonce'=>wp_create_nonce('mpwp_reseller_login'), 'login_email'=>$tag.'reseller@example.test', 'login_password'=>'Test-local-123!']);
+    Reseller_Manager::handle_shortcode_form(); expect_true(get_current_user_id() === 0, 'disabled account logged in'); $_POST = [];
+});
+verify_case('non-reseller login is denied even with enabled metadata', function () use ($customer, $tag) {
+    update_user_meta($customer, 'mpwp_reseller_status', 'enabled'); wp_set_current_user(0);
+    $_POST = wp_slash(['mpwp_reseller_action'=>'login', 'mpwp_reseller_nonce'=>wp_create_nonce('mpwp_reseller_login'), 'login_email'=>$tag.'customer@example.test', 'login_password'=>'Test-local-123!']);
+    try { Reseller_Manager::handle_shortcode_form(); } catch (Reseller_Test_Redirect $e) {}
+    expect_true(get_current_user_id() === 0, 'non-reseller logged in'); $_POST = [];
+});
+verify_case('malformed signup scalar input is rejected without exception', function () {
+    $_POST = ['mpwp_reseller_action'=>['signup'], 'mpwp_reseller_nonce'=>'test'];
+    Reseller_Manager::handle_shortcode_form(); $_POST = [];
+});
+verify_case('uninstall preserves accounts and unrelated metadata without SQL errors', function () use ($reseller, $customer) {
+    global $wpdb;
+    update_user_meta($customer, 'mpwp_reseller_external', 'keep');
+    update_user_meta($reseller, 'mpwp_reseller_discount', 10);
+    $previous = $wpdb->suppress_errors(true);
+    try { Reseller_Manager::uninstall(); $error = $wpdb->last_error; }
+    finally { $wpdb->suppress_errors($previous); Reseller_Manager::register_reseller_role(); }
+    expect_true($error === '', 'uninstall SQL error: '.$error);
+    expect_true((bool)get_userdata($reseller), 'uninstall deleted WordPress account');
+    expect_true(!in_array('mpwp_reseller', (array)get_userdata($reseller)->roles, true), 'removed role still assigned');
+    expect_true(get_user_meta($reseller, 'mpwp_reseller_discount', true) === '', 'owned metadata remains');
+    expect_true(get_user_meta($customer, 'mpwp_reseller_external', true) === 'keep', 'unrelated metadata removed');
+});
+
 // Remove all fixtures created in this run, including a signup from a failed assertion.
 foreach (get_users(['search'=>$tag.'*', 'search_columns'=>['user_login']]) as $user) wp_delete_user($user->ID);
 $p1->delete(true); $p2->delete(true);
