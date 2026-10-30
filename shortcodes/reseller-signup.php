@@ -1,10 +1,10 @@
 <?php
 //Shortcode per il signup del reseller
 $mpwp_signup_notice = Reseller_Manager::get_form_notice('signup');
-$mpwp_signup_name   = isset($_POST['mpwp-reseller-signup-name']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-name'])) : '';
-$mpwp_signup_email  = isset($_POST['mpwp-reseller-signup-email']) ? sanitize_email(wp_unslash($_POST['mpwp-reseller-signup-email'])) : '';
-$mpwp_signup_cf    = isset($_POST['mpwp-reseller-signup-cf']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-cf'])) : '';
-$mpwp_signup_piva  = isset($_POST['mpwp-reseller-signup-piva']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-piva'])) : '';
+$mpwp_signup_name   = (isset($_POST['mpwp-reseller-signup-name']) && is_string($_POST['mpwp-reseller-signup-name'])) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-name'])) : '';
+$mpwp_signup_email  = (isset($_POST['mpwp-reseller-signup-email']) && is_string($_POST['mpwp-reseller-signup-email'])) ? sanitize_email(wp_unslash($_POST['mpwp-reseller-signup-email'])) : '';
+$mpwp_signup_cf    = (isset($_POST['mpwp-reseller-signup-cf']) && is_string($_POST['mpwp-reseller-signup-cf'])) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-cf'])) : '';
+$mpwp_signup_piva  = (isset($_POST['mpwp-reseller-signup-piva']) && is_string($_POST['mpwp-reseller-signup-piva'])) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-piva'])) : '';
 ?>
 
 <?php if ($mpwp_signup_notice) : ?>

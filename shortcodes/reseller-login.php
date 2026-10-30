@@ -1,7 +1,7 @@
 <?php
 // Shortcode per il login del reseller
 $mpwp_login_notice = Reseller_Manager::get_form_notice('login');
-$mpwp_login_email  = isset($_POST['login_email']) ? sanitize_email(wp_unslash($_POST['login_email'])) : '';
+$mpwp_login_email  = (isset($_POST['login_email']) && is_string($_POST['login_email'])) ? sanitize_email(wp_unslash($_POST['login_email'])) : '';
 ?>
 
 <?php if ($mpwp_login_notice) : ?>
