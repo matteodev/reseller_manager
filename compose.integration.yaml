@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mariadb:10.11
+    environment:
+      MARIADB_ROOT_PASSWORD: local-tests-only
+      MARIADB_DATABASE: reseller_tests
+      MARIADB_USER: reseller
+      MARIADB_PASSWORD: local-tests-only
+    volumes:
+      - test-db:/var/lib/mysql
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  wordpress:
+    image: wordpress:php8.2-apache
+    environment: &wp-env
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: reseller_tests
+      WORDPRESS_DB_USER: reseller
+      WORDPRESS_DB_PASSWORD: local-tests-only
+    volumes: &wp-volumes
+      - test-wp:/var/www/html
+      - .:/var/www/html/wp-content/plugins/reseller_manager:ro
+    depends_on:
+      db:
+        condition: service_healthy
+  cli:
+    image: wordpress:cli-php8.3
+    user: '33:33'
+    environment: *wp-env
+    volumes: *wp-volumes
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  test-db:
+  test-wp:
