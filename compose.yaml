@@ -1,0 +1,13 @@
+services:
+  tests:
+    image: wordpress:cli-php8.3
+    entrypoint: ["php"]
+    command: ["/app/tests/signup.php"]
+    working_dir: /app
+    volumes:
+      - .:/app:ro
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
