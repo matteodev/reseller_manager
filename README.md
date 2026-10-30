@@ -1,75 +1,110 @@
 # Reseller Manager
 
-Educational demonstration project. It is not production-ready software or a hosted service. Known authorization and pricing issues remain under review; see [audit status](docs/AUDIT.md).
-Reseller Manager By <a href="https://matcode.dev">matteodev</a>
+A demonstration WooCommerce add-on by [matteodev](https://matcode.dev) for reseller
+signup, account approval and dedicated prices. This is an educational project,
+not production-ready software or a hosted service.
 
-Donate: <a href="https://www.paypal.me/matteopapparella">PayPal</a>
+## Implemented features
 
-Suggestions and feedback are welcome! Please report any bugs or issues on the [GitHub repository](https://github.com/matteodev/reseller_manager/issues).
+- Signup and login forms through `[mcwp_reseller_signup]` and `[mcwp_reseller_auth]`,
+  also exposed as Gutenberg blocks.
+- Pending reseller accounts (`mpwp_reseller` role) and administrative approval.
+- Administrative global discounts and product-specific prices.
+- A catalog/cart discount mode and a full-catalog-price mode using a discount fee.
 
-WooCommerce add-on to manage reseller accounts: collect signups/logins via shortcodes, approve accounts, and apply global or product-specific pricing.
+## Installation and administration
 
-## Requirements
-- WordPress 6.0+ and WooCommerce active (plugin checks and deactivates itself if WooCommerce is missing)
-- PHP 7.4+ recommended
+1. Use an isolated WordPress environment with WooCommerce active.
+2. Copy this directory to `wp-content/plugins/reseller_manager` and activate it.
+3. Put the shortcodes or blocks on WordPress pages.
+4. Use **Rivenditori** to create, approve, disable or delete reseller accounts.
+   Profile access and mutations require `manage_options`; deletion additionally
+   checks the target user's deletion capability. Only reseller users are targets.
+5. Use **Rivenditori → Impostazioni** to choose pricing behavior.
 
-## Installation
-1. Copy the `mc-reseller-manager` folder into `wp-content/plugins/`.
-2. Activate **Reseller Manager** from the Plugins screen (activation registers the `mpwp_reseller` role).
-3. Keep WooCommerce active for the plugin to stay enabled.
+When `reseller_show_full_price` is off, approved resellers receive numeric custom
+product prices or the global percentage discount. Custom prices also work with a
+zero global discount. `reseller_apply_regular_price` selects the regular price
+rather than the current sale price as the global-discount base in this mode.
+Totals can be recalculated without compounding the discount or changing the
+product's regular price. These prices are recomputed from persisted product data.
 
-## Admin usage
-- **Rivenditori menu**: lists reseller users, lets you enable/disable/delete accounts, and open each profile.
-- **Reseller profile**: set a per-user global discount (%), assign custom product prices (when the catalog-discount setting is off), and see status/meta. Actions require nonce confirmation; enabling a reseller triggers an email (if created by an admin it includes the password reset link).
-- **Settings** (Rivenditori -> Impostazioni): toggle `reseller_show_full_price` to show catalog prices at list price and apply the discount only at checkout; disabling it shows reseller prices immediately and enables product-specific pricing.
-- **Uninstall** cleans up the reseller role, reseller metadata, and reseller users.
+When `reseller_show_full_price` is on, the catalog stays at public prices and a
+negative fee applies the global discount to the cart subtotal. Product-specific
+prices are inactive in this mode. This fee is not a WooCommerce coupon; complex
+coupon, tax and shipping combinations require separate validation.
 
-## Frontend shortcodes
-- `[mcwp_reseller_signup]`: signup form; creates a user with role `mpwp_reseller`, status `disabled`, and shows a pending-approval notice.
-- `[mcwp_reseller_auth]`: login form for resellers; only works when `mpwp_reseller_status` is `enabled` and redirects to the WooCommerce shop page.
-Place the shortcodes on standard WordPress pages (e.g., "Reseller Signup" and "Reseller Login").
+Signup accounts remain pending until approved. Only enabled users with the reseller
+role can log in through the reseller form or receive reseller pricing. The standard
+WordPress login remains governed by WordPress; pending accounts are not globally
+locked out of WordPress authentication.
 
-## Pricing logic
-- Global discount stored in `mpwp_reseller_discount` is applied to the cart totals (fee label: "Sconto Rivenditore").
-- When `reseller_show_full_price` is disabled (default), product prices in the catalog/cart reflect reseller discounts; product-specific prices from `mpwp_reseller_product_prices` override the discount.
-- When `reseller_show_full_price` is enabled, the catalog shows full price and the discount is applied at checkout; product-specific pricing is not available.
+Uninstall removes this plugin's exact metadata keys, its two options and its role.
+It **preserves WordPress accounts and content**, assigning `subscriber` when removing
+the reseller role leaves an account without another role. Deleting an account from
+the administration screen is a separate, explicit action.
 
-## File map
-- `reseller-manager.php`: plugin bootstrap and lifecycle hooks.
-- `class/class-reseller-manager.php`: core logic, hooks, pricing filters, asset enqueue.
-- `class/class-reseller-table.php`: admin list table implementation.
-- `pages/*.php`: admin views and reseller profile.
-- `shortcodes/*.php`: frontend forms.
-- `assets/css/reseller-manager.css`: basic styling for forms and admin additions.
-- `assets/css/rivenditori.css`: styling loaded only for logged-in resellers.
+## Run all checks
 
-## Notes
-- Text domain: `mc-reseller-manager`
-- License: GPLv2 or later
+Requirements: Docker Engine, Docker Compose and Bash. Run from the repository root:
 
-## Translations
-- PO file: `languages/mc-reseller-manager-en_US.po`
-- Generate the MO file with `msgfmt languages/mc-reseller-manager-en_US.po -o languages/mc-reseller-manager-en_US.mo`
-- Ensure the plugin loads the text domain with `load_plugin_textdomain('mc-reseller-manager', false, dirname(plugin_basename(__FILE__)) . '/languages');`
+```sh
+bash tests/run.sh
+```
 
-## Reproducible checks
+The runner creates a new Docker project with dedicated WordPress/database volumes,
+installs WooCommerce **11.2.1**, runs all suites and removes only its temporary project
+and volumes on exit. It publishes no ports and mounts this repository read-only.
+Initial image/plugin downloads need internet access. Compose images are pinned by
+digest; local database credentials are test-only placeholders.
 
-Run `docker compose run --rm tests` from the repository root. Docker Compose uses
-`wordpress:cli-php8.3`, mounts the source read-only and disables container networking.
-The image must already be available or be pulled first. The tag is not digest-pinned.
+Available checks:
 
-The focused PHP test uses WordPress function doubles. It checks signup field names,
-separate fiscal/VAT metadata, invalid nonce rejection, the reseller role and pending
-approval status. It does **not** install WordPress, WooCommerce or a database, test
-real login/approval/email, or verify checkout pricing. PHP 7.4 and the WordPress /
-WooCommerce compatibility matrix have not been validated. The requirements above
-are inherited project claims, not verified compatibility guarantees.
+| Suite | Scope |
+| --- | --- |
+| `tests/signup.php` | 12 form/handler contract assertions with WordPress doubles |
+| `tests/integration.php` | 29 cases using actual WordPress, WooCommerce and MariaDB |
+| `tests/http.php` | 7 HTTP cases for rendered forms, nonce rejection, signup, pending/approved login and cookies |
+| `tests/lint.php` | PHP syntax across all repository PHP files |
 
-## Current status and roadmap
+Quick isolated contract check: `docker compose run --rm tests`.
+Syntax check: `docker compose run --rm tests /app/tests/lint.php`.
+Full integration uses `compose.integration.yaml`; its database is disposable.
+Never point these test scripts at an existing site or production database.
 
-- Implemented: signup/login handlers, admin screens and reseller pricing hooks.
-- Verified: signup form/handler contract in isolated Docker on PHP 8.3, plus PHP syntax.
-- Current limits: authorization, cart pricing, uninstall and full integration flows
-  still need reproduction and correction; see the audit for priorities.
-- Next: disposable WordPress/WooCommerce/database integration environment,
-  permission regression tests, numeric/idempotent cart pricing and compatibility CI.
+## Verified configuration and limits
+
+The tested stack is WordPress **7.0**, WooCommerce **11.2.1**, MariaDB **10.11**,
+PHP **8.3.33** for CLI integration and PHP **8.2.31** for HTTP requests.
+The older README's WordPress 6.0+/PHP 7.4+ statements were not backed by a tested
+matrix and are not compatibility guarantees.
+
+Tests cover unauthorized profile reads/writes, target-role validation, approval,
+nonce rejection, numeric multi-row pricing, repeated totals, zero discounts,
+disabled/non-reseller exclusion, paginated price saves, password characters,
+shortcode/block output, malformed frontend values and safe uninstall cleanup.
+Email sending is intercepted in controller tests; actual email delivery and reset
+links are not verified. The integration suite invokes uninstall cleanup directly,
+not WordPress's complete plugin-deletion UI.
+
+Not yet verified: multisite lifecycle, older WordPress/PHP/WooCommerce versions,
+browser automation, variable/grouped price ranges, variation-specific pricing UI,
+Store API/Checkout Blocks, advanced tax/coupon/shipping combinations, external
+pricing plugins, large reseller datasets and a comprehensive security review.
+The classic cart tests use simple products. Variable/grouped catalog range HTML
+is left to WooCommerce. Recomputing prices from persisted data may conflict with
+other plugins that change prices dynamically.
+
+## Roadmap and project details
+
+Next: extend the compatibility/test matrix, cover variable products and Store API,
+validate taxes/coupons and email delivery, then automate the Docker runner in CI.
+See [audit history and current findings](docs/AUDIT.md). Suggested GitHub topics:
+`wordpress`, `woocommerce`, `php`, `demo`.
+
+- Entry point: `reseller-manager.php`; core: `class/class-reseller-manager.php`.
+- Administrative pages: `pages/`; forms: `shortcodes/`; blocks: `blocks/`.
+- Text domain: `mc-reseller-manager`; translations: `languages/`.
+- License declared in plugin metadata: GPLv2 or later; a standalone license text
+  and a complete license review remain documentation work.
+- [Report issues](https://github.com/matteodev/reseller_manager/issues).
