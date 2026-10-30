@@ -1,4 +1,6 @@
-﻿# Reseller Manager
+# Reseller Manager
+
+Educational demonstration project. It is not production-ready software or a hosted service. Known authorization and pricing issues remain under review; see [audit status](docs/AUDIT.md).
 Reseller Manager By <a href="https://matcode.dev">matteodev</a>
 
 Donate: <a href="https://www.paypal.me/matteopapparella">PayPal</a>
@@ -49,3 +51,25 @@ Place the shortcodes on standard WordPress pages (e.g., "Reseller Signup" and "R
 - PO file: `languages/mc-reseller-manager-en_US.po`
 - Generate the MO file with `msgfmt languages/mc-reseller-manager-en_US.po -o languages/mc-reseller-manager-en_US.mo`
 - Ensure the plugin loads the text domain with `load_plugin_textdomain('mc-reseller-manager', false, dirname(plugin_basename(__FILE__)) . '/languages');`
+
+## Reproducible checks
+
+Run `docker compose run --rm tests` from the repository root. Docker Compose uses
+`wordpress:cli-php8.3`, mounts the source read-only and disables container networking.
+The image must already be available or be pulled first. The tag is not digest-pinned.
+
+The focused PHP test uses WordPress function doubles. It checks signup field names,
+separate fiscal/VAT metadata, invalid nonce rejection, the reseller role and pending
+approval status. It does **not** install WordPress, WooCommerce or a database, test
+real login/approval/email, or verify checkout pricing. PHP 7.4 and the WordPress /
+WooCommerce compatibility matrix have not been validated. The requirements above
+are inherited project claims, not verified compatibility guarantees.
+
+## Current status and roadmap
+
+- Implemented: signup/login handlers, admin screens and reseller pricing hooks.
+- Verified: signup form/handler contract in isolated Docker on PHP 8.3, plus PHP syntax.
+- Current limits: authorization, cart pricing, uninstall and full integration flows
+  still need reproduction and correction; see the audit for priorities.
+- Next: disposable WordPress/WooCommerce/database integration environment,
+  permission regression tests, numeric/idempotent cart pricing and compatibility CI.
