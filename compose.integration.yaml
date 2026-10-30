@@ -28,6 +28,7 @@ services:
         condition: service_healthy
   cli:
     image: wordpress:cli-php8.3
+    entrypoint: [wp]
     user: '33:33'
     environment: *wp-env
     volumes: *wp-volumes
