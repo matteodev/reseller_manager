@@ -1,0 +1,33 @@
+name: Docker tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: docker-tests-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Run isolated Docker suites
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          bash tests/run.sh 2>&1 | tee artifacts/docker-tests.log
+      - name: Preserve test output
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: docker-test-output
+          path: artifacts/docker-tests.log
+          if-no-files-found: warn
+          retention-days: 14
