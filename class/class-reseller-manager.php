@@ -34,9 +34,9 @@ class Reseller_Manager{
         if(get_option('reseller_show_full_price') == 0){
             //Mostro i prezzi rivenditore
             add_filter('woocommerce_get_price_html', [__CLASS__, 'filter_price_html'], 10, 2);
-            add_filter('woocommerce_get_sale_price', [__CLASS__, 'filter_sale_price'], 10, 2);
+            // Raw product getters retain WooCommerce's numeric catalog values.
             //Mando al carrello i prezzi corretti
-            add_filter('woocommerce_before_calculate_totals', [__CLASS__, 'filter_price'], 10, 2);
+            add_action('woocommerce_before_calculate_totals', [__CLASS__, 'filter_price'], 10, 1);
         }
 
         //Modifica campi edit-account solo per rivenditori
@@ -58,31 +58,21 @@ class Reseller_Manager{
     }
 
     public static function uninstall() {
-        // Rimuovi il ruolo reseller
+        // Keep WordPress accounts and their content. Remove only this plugin's role/data.
+        foreach (get_users(['role' => 'mpwp_reseller']) as $user) {
+            $user->remove_role('mpwp_reseller');
+            if (!$user->roles) {
+                $user->add_role('subscriber');
+            }
+        }
+        foreach (['mpwp_reseller_status', 'mpwp_reseller_discount',
+            'mpwp_reseller_product_prices', 'mpwp_reseller_codice_fiscale',
+            'mpwp_reseller_partita_iva', 'mpwp_reseller_creation_from'] as $key) {
+            delete_metadata('user', 0, $key, '', true);
+        }
+        delete_option('reseller_show_full_price');
+        delete_option('reseller_apply_regular_price');
         remove_role('mpwp_reseller');
-
-        // Rimuovi gli usermeta creati dal plugin
-        global $wpdb;
-
-        // Elimina lo status reseller
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->query(
-            "DELETE FROM {$wpdb->usermeta} WHERE meta_key = 'mpwp_reseller_status'"
-        );
-
-        // Elimina eventuali altri metadati
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->query(
-            "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'mpwp_reseller_%'"
-        );
-
-        // Elimino tutti i gli utenti con il ruolo reseller
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->query(
-            "DELETE FROM {$wpdb->users} WHERE role = 'mpwp_reseller'"
-        );
-
-        //Elimino i blocchi registrati
         self::unregister_blocks();
     }
 
@@ -113,7 +103,7 @@ class Reseller_Manager{
             'reseller-manager',
             'Profilo Rivenditore',
             'Profilo Rivenditore',
-            'read',
+            'manage_options',
             'mpwp-reseller-view',
             array(__CLASS__, 'reseller_profile_page')
         );
@@ -165,11 +155,15 @@ class Reseller_Manager{
     }
 
     public static function reseller_login_form() {
-        require_once( plugin_dir_path(__FILE__) . '../shortcodes/reseller-login.php');
+        ob_start();
+        include plugin_dir_path(__FILE__) . '../shortcodes/reseller-login.php';
+        return ob_get_clean();
     }
 
     public static function reseller_signup_form() {
-        require_once( plugin_dir_path(__FILE__) . '../shortcodes/reseller-signup.php');
+        ob_start();
+        include plugin_dir_path(__FILE__) . '../shortcodes/reseller-signup.php';
+        return ob_get_clean();
     }
 
     public static function register_blocks() {
@@ -195,7 +189,10 @@ class Reseller_Manager{
 
         foreach ($blocks as $block_path) {
             if (file_exists(trailingslashit($block_path) . 'block.json')) {
-                unregister_block_type($block_path);
+                $metadata = json_decode(file_get_contents(trailingslashit($block_path) . 'block.json'), true);
+                if (isset($metadata['name']) && WP_Block_Type_Registry::get_instance()->is_registered($metadata['name'])) {
+                    unregister_block_type($metadata['name']);
+                }
             }
         }
     }
@@ -252,6 +249,11 @@ class Reseller_Manager{
             return;
         }
 
+        foreach ($_POST as $value) {
+            if (!is_scalar($value)) {
+                return;
+            }
+        }
         $action = sanitize_key(wp_unslash($_POST['mpwp_reseller_action']));
         $nonce  = isset($_POST['mpwp_reseller_nonce'])
             ? sanitize_text_field(wp_unslash($_POST['mpwp_reseller_nonce']))
@@ -283,7 +285,7 @@ class Reseller_Manager{
         $codice_fiscale = isset($_POST['mpwp-reseller-signup-cf']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-cf'])) : '';
         $partita_iva = isset($_POST['mpwp-reseller-signup-piva']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-piva'])) : '';
         $email    = isset($_POST['mpwp-reseller-signup-email']) ? sanitize_email(wp_unslash($_POST['mpwp-reseller-signup-email'])) : '';
-        $password = isset($_POST['mpwp-reseller-signup-password']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-password'])) : '';
+        $password = isset($_POST['mpwp-reseller-signup-password']) ? wp_unslash($_POST['mpwp-reseller-signup-password']) : '';
 
         if (empty($name) || empty($email) || empty($password)) {
             self::set_form_notice('signup', 'Compila tutti i campi richiesti.');
@@ -344,7 +346,7 @@ class Reseller_Manager{
         }
 
         $email    = isset($_POST['login_email']) ? sanitize_email(wp_unslash($_POST['login_email'])) : '';
-        $password = isset($_POST['login_password']) ? sanitize_text_field(wp_unslash($_POST['login_password'])) : '';
+        $password = isset($_POST['login_password']) ? wp_unslash($_POST['login_password']) : '';
         $remember = ! empty($_POST['rememberme']);
 
         if (empty($email) || empty($password)) {
@@ -362,7 +364,7 @@ class Reseller_Manager{
         // Controllo stato reseller
         $status = get_user_meta($user->ID, 'mpwp_reseller_status', true);
 
-        if ($status !== 'enabled') {
+        if ($status !== 'enabled' || !in_array('mpwp_reseller', (array) $user->roles, true)) {
             self::set_form_notice('login', 
                 __('Il tuo account rivenditore non è ancora stato approvato. Riprova più tardi.', 'mc-reseller-manager'),
                 'warning'
@@ -382,142 +384,82 @@ class Reseller_Manager{
         exit;
     }
 
+    private static function is_enabled_reseller() {
+        $user = wp_get_current_user();
+        return $user->exists()
+            && in_array('mpwp_reseller', (array) $user->roles, true)
+            && get_user_meta($user->ID, 'mpwp_reseller_status', true) === 'enabled';
+    }
+
+    private static function reseller_discount() {
+        $value = get_user_meta(get_current_user_id(), 'mpwp_reseller_discount', true);
+        return is_numeric($value) ? max(0, min(100, (float) $value)) : 0;
+    }
+
+    private static function reseller_price($product) {
+        // Edit context bypasses display filters. Never mutate regular/sale prices.
+        $price = get_option('reseller_apply_regular_price') == 1
+            ? $product->get_regular_price('edit') : $product->get_price('edit');
+        if (!is_numeric($price)) {
+            return null;
+        }
+        $prices = get_user_meta(get_current_user_id(), 'mpwp_reseller_product_prices', true);
+        if (is_array($prices) && isset($prices[$product->get_id()])
+            && is_numeric($prices[$product->get_id()]) && (float) $prices[$product->get_id()] >= 0) {
+            return (float) $prices[$product->get_id()];
+        }
+        return (float) $price * (1 - self::reseller_discount() / 100);
+    }
+
     public static function apply_discount($cart) {
-        $user_id = get_current_user_id();
-        if (!$user_id) {
+        if (!self::is_enabled_reseller() || get_option('reseller_show_full_price') != 1) {
             return;
         }
-
-        $discount = get_user_meta($user_id, 'mpwp_reseller_discount', true);
+        $discount = self::reseller_discount();
         if (!$discount) {
             return;
         }
-
-        // Se l'opzione è disabilitata mostriamo prezzi già scontati e non aggiungiamo fee.
-        if (get_option('reseller_show_full_price') == 0) {            
-            return;
-        }
-
         foreach ($cart->get_fees() as $fee) {
             if ($fee->name === __('Sconto Rivenditore', 'mc-reseller-manager')) {
                 return;
             }
         }
-
-
-        $total = $cart->get_subtotal();
-        $discount_amount = $total * ($discount / 100);
-
-        $cart->add_fee(__('Sconto Rivenditore', 'mc-reseller-manager'), -$discount_amount);
+        $cart->add_fee(__('Sconto Rivenditore', 'mc-reseller-manager'), -$cart->get_subtotal() * $discount / 100);
     }
 
     public static function filter_price_html($price_html, $product) {
-        $user_id = get_current_user_id();
-        if (!$user_id) {
+        if (!self::is_enabled_reseller() || get_option('reseller_show_full_price') == 1
+            || $product->is_type(array('variable', 'grouped'))) {
             return $price_html;
         }
-
-        //Recupero prezzo speciale
-        $product_prices = get_user_meta($user_id, 'mpwp_reseller_product_prices', true);
-        $product_prices = is_array($product_prices) ? $product_prices : [];
-
-        if (isset($product_prices[$product->get_id()])) {
-            //Setto prezzo speciale
-            $price = wc_price($product_prices[$product->get_id()]);
-            return $price;
-        }
-        
-
-        $discount = get_user_meta($user_id, 'mpwp_reseller_discount', true);
-        if (!$discount) {
-            return $price_html;
-        }
-
-        // Se l'opzione è abilitata calcoliamo sconto sul prezzo originale
-        if (get_option('reseller_apply_regular_price') == 1) {
-            $price = $product->get_regular_price();
-        } else {
-            $price = $product->get_price();
-        }
-
-        $discount_price = $price * (1 - $discount / 100);
-
-        $product->set_regular_price($discount_price);
-
-        //Applico prezzo rivenditore
-        $price_html = wc_price($discount_price);
-
-        return $price_html;
+        $price = self::reseller_price($product);
+        return $price === null ? $price_html : wc_price(wc_get_price_to_display($product, ['price' => $price]));
     }
 
-    //Filtro prezzo sale
+    // Retained for callers of the previous public method; not registered as a getter filter.
     public static function filter_sale_price($sale_price, $product) {
-        $user_id = get_current_user_id();
-        if (!$user_id) {
+        if (!self::is_enabled_reseller() || get_option('reseller_show_full_price') == 1) {
             return $sale_price;
         }
-
-        //Recupero prezzo speciale
-        $product_prices = get_user_meta($user_id, 'mpwp_reseller_product_prices', true);
-        $product_prices = is_array($product_prices) ? $product_prices : [];
-
-        if (isset($product_prices[$product->get_id()])) {
-            //Setto prezzo speciale
-            $price = wc_price($product_prices[$product->get_id()]);
-            return $price;
-        }
-
-        $sale_price = $product->get_regular_price();
-
-        return $sale_price;
+        $price = self::reseller_price($product);
+        return $price === null ? $sale_price : $price;
     }
 
-    //Applico prezzo rivenditore al carrello
     public static function filter_price($cart) {
-        // Evita applicazioni multiple
-        if (did_action('woocommerce_before_calculate_totals') >= 2) return;
-
-        $user_id = get_current_user_id();
-        if (!$user_id) return;
-
-        $discount = get_user_meta($user_id, 'mpwp_reseller_discount', true);
-        if (!$discount) return;
-
         foreach ($cart->get_cart() as $item) {
-
             $product = $item['data'];
-
-            // Usa il prezzo effettivo del prodotto
-            // Se l'opzione è abilitata calcoliamo sconto sul prezzo originale
-            if (get_option('reseller_apply_regular_price') == 1) {
-                $price = $product->get_regular_price();
-            } else {
-                $price = $product->get_price();
+            // Reload persisted catalog values: repeated totals must not compound discounts.
+            $original = wc_get_product($product->get_id());
+            if (!$original) {
+                continue;
             }
-
-            // Se il prodotto ha un prezzo speciale, usa quello
-            $product_prices = get_user_meta($user_id, 'mpwp_reseller_product_prices', true);
-            $product_prices = is_array($product_prices) ? $product_prices : [];
-
-            if (isset($product_prices[$product->get_id()])) {
-                $price = wc_price($product_prices[$product->get_id()]);
-                // Aggiorno il prezzo del prodotto nel carrello
+            $price = $original->get_price('edit');
+            if (self::is_enabled_reseller() && get_option('reseller_show_full_price') != 1) {
+                $price = self::reseller_price($original);
+            }
+            if ($price !== null && is_numeric($price)) {
                 $product->set_price($price);
-
-                // Setto il regolare prezzo al prezzo originale
-                $product->set_regular_price($price);
-                
-                return;
             }
-
-            // Calcolo sconto
-            $discount_price = $price * (1 - ($discount / 100));
-
-            // Aggiorno il prezzo del prodotto nel carrello
-            $product->set_price($discount_price);
-
-            // Setto il regolare prezzo al prezzo originale
-            $product->set_regular_price($discount_price);
         }
     }
 

@@ -151,7 +151,7 @@ verify_case('profile renders independent, balanced forms including discount nonc
 });
 require_once dirname(__DIR__).'/class/class-reseller-table.php';
 class Reseller_Test_Redirect extends RuntimeException {}
-add_filter('wp_redirect', function ($url) { throw new Reseller_Test_Redirect($url); });
+add_filter('wp_redirect', function ($url) { throw new Reseller_Test_Redirect($url); }, 1);
 verify_case('subscriber cannot approve reseller using valid nonce', function () use ($customer, $reseller) {
     wp_set_current_user($customer); update_user_meta($reseller, 'mpwp_reseller_status', 'disabled');
     $_GET = ['action'=>'enable', 'id'=>$reseller, 'confirm'=>'1', '_wpnonce'=>wp_create_nonce('enable_reseller_'.$reseller)];

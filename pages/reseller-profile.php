@@ -1,4 +1,8 @@
 <?php
+if (!defined('ABSPATH')) { exit; }
+if (!current_user_can('manage_options')) {
+    wp_die(esc_html__('Non autorizzato.', 'mc-reseller-manager'));
+}
 $mpwp_reseller_id = isset($_GET['id']) ? absint(wp_unslash($_GET['id'])) : 0;
 
 if (! $mpwp_reseller_id) {
@@ -7,7 +11,7 @@ if (! $mpwp_reseller_id) {
 
 $reseller = get_userdata($mpwp_reseller_id);
 
-if (! $reseller) {
+if (!$reseller || !in_array('mpwp_reseller', (array) $reseller->roles, true)) {
     wp_die('Reseller non trovato.');
 }
 
@@ -49,18 +53,23 @@ if (
         exit;
     }
 
-    $mpwp_clean_prices = [];
+    $mpwp_clean_prices = $mpwp_product_prices;
     if (isset($_POST['mpwp_reseller_product_price']) && is_array($_POST['mpwp_reseller_product_price'])) {
         foreach ($_POST['mpwp_reseller_product_price'] as $product_id => $value) {
             $product_id = absint($product_id);
             if (! $product_id) {
                 continue;
             }
+            if (!is_scalar($value)) { continue; }
+            $product = wc_get_product($product_id);
+            if (!$product) { continue; }
             $price = trim((string) wp_unslash($value));
             if ($price === '') {
+                unset($mpwp_clean_prices[$product_id]);
                 continue;
             }
-            $price = max(0, floatval($price));
+            if (!is_numeric($price) || (float) $price < 0) { continue; }
+            $price = (float) $price;
             $mpwp_clean_prices[$product_id] = $price;
         }
     }
@@ -91,8 +100,7 @@ $mpwp_apply_discount_url = wp_nonce_url(add_query_arg(['action' => 'apply_discou
         <div class="notice notice-success is-dismissible"><p><?php echo esc_html($mpwp_prices_notice); ?></p></div>
     <?php endif; ?>
 
-    <form method="post">
-        <?php wp_nonce_field('mpwp_reseller_discount_' . $mpwp_reseller_id, 'mpwp_reseller_discount_nonce'); ?>
+    <div>
         <div class="mpwp-reseller-columns" style="display:grid;grid-template-columns:repeat(2,1fr);gap:300px;">
             <div class="card">
                 <h2 style="padding-left:0" class="title"><i class="dashicons dashicons-businessman"></i> <?php echo esc_html($reseller->display_name); ?></h2>
@@ -136,6 +144,8 @@ $mpwp_apply_discount_url = wp_nonce_url(add_query_arg(['action' => 'apply_discou
             </div>
 
             <div class="card">
+                <form method="post">
+                <?php wp_nonce_field('mpwp_reseller_discount_' . $mpwp_reseller_id, 'mpwp_reseller_discount_nonce'); ?>
                 <h2 class="title"><?php esc_html_e('Gestisci sconto', 'mc-reseller-manager'); ?></h2>
                 <table class="form-table">
                     <tbody>
@@ -161,6 +171,7 @@ $mpwp_apply_discount_url = wp_nonce_url(add_query_arg(['action' => 'apply_discou
                     </tbody>
                 </table>
 
+                </form>
                 <hr>
                 <h2 style="padding-left:0" class="title"><?php esc_html_e('Azioni account', 'mc-reseller-manager'); ?></h2>
                 <p><?php esc_html_e('Gestisci lo stato del rivenditore oppure rimuovilo definitivamente.', 'mc-reseller-manager'); ?></p>
@@ -309,5 +320,5 @@ $mpwp_apply_discount_url = wp_nonce_url(add_query_arg(['action' => 'apply_discou
             <?php endif; ?>
         <?php }?>
         </div>
-    </form>
+    </div>
 </div>

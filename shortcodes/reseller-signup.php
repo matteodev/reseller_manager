@@ -5,7 +5,6 @@ $mpwp_signup_name   = isset($_POST['mpwp-reseller-signup-name']) ? sanitize_text
 $mpwp_signup_email  = isset($_POST['mpwp-reseller-signup-email']) ? sanitize_email(wp_unslash($_POST['mpwp-reseller-signup-email'])) : '';
 $mpwp_signup_cf    = isset($_POST['mpwp-reseller-signup-cf']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-cf'])) : '';
 $mpwp_signup_piva  = isset($_POST['mpwp-reseller-signup-piva']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-piva'])) : '';
-$mpwp_signup_password = isset($_POST['mpwp-reseller-signup-password']) ? sanitize_text_field(wp_unslash($_POST['mpwp-reseller-signup-password'])) : '';
 ?>
 
 <?php if ($mpwp_signup_notice) : ?>

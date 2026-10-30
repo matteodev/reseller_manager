@@ -37,6 +37,13 @@ class Reseller_Table extends WP_List_Table {
             return;
         }
 
+        $target = get_userdata($id);
+        if (!current_user_can('manage_options') || !$target
+            || !in_array('mpwp_reseller', (array) $target->roles, true)
+            || ($action === 'delete' && !current_user_can('delete_user', $id))) {
+            wp_die(esc_html__('Non autorizzato.', 'mc-reseller-manager'));
+        }
+
         $nonce = self::validate_action_nonce($action, $id);
 
         if (! self::is_confirmed()) {
