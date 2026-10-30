@@ -189,6 +189,22 @@ verify_case('malformed signup scalar input is rejected without exception', funct
     $_POST = ['mpwp_reseller_action'=>['signup'], 'mpwp_reseller_nonce'=>'test'];
     Reseller_Manager::handle_shortcode_form(); $_POST = [];
 });
+verify_case('Gutenberg blocks render signup and login forms', function () {
+    foreach (['signup', 'login'] as $kind) {
+        $html = render_block(['blockName'=>'mc-reseller-manager/reseller-'.$kind, 'attrs'=>[], 'innerBlocks'=>[], 'innerHTML'=>'', 'innerContent'=>[]]);
+        expect_true(strpos($html, '<form') !== false, $kind.' block is blank');
+    }
+});
+verify_case('repeated shortcodes each return a form', function () {
+    $html = do_shortcode('[mcwp_reseller_signup][mcwp_reseller_signup]');
+    expect_true(substr_count($html, '<form') === 2, 'repeated shortcode omitted a form');
+});
+verify_case('array inputs do not crash frontend form rendering', function () {
+    $_POST = ['mpwp-reseller-signup-email'=>[], 'login_email'=>[]];
+    try { do_shortcode('[mcwp_reseller_signup][mcwp_reseller_auth]'); }
+    finally { $_POST = []; }
+});
+
 verify_case('uninstall preserves accounts and unrelated metadata without SQL errors', function () use ($reseller, $customer) {
     global $wpdb;
     update_user_meta($customer, 'mpwp_reseller_external', 'keep');
