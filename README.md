@@ -103,7 +103,8 @@ Next: extend the compatibility/test matrix, cover variable products and Store AP
 validate taxes/coupons and email delivery.
 The [Docker tests workflow](.github/workflows/docker-tests.yml) now runs the same
 local runner on push and pull requests and preserves its output. Its syntax has
-been validated with actionlint; check GitHub Actions after pushing for the remote result.
+been validated with actionlint. The [first public run](https://github.com/matteodev/reseller_manager/actions/runs/41111811672)
+passed on commit `440ceae`; see the case study for verification metadata.
 See [audit history and current findings](docs/AUDIT.md). Suggested GitHub topics:
 `wordpress`, `woocommerce`, `php`, `demo`.
 

@@ -1,0 +1,20 @@
+{
+  "id": 41111811672,
+  "name": "Docker tests",
+  "head_sha": "440ceae2624000f3bee86eeee74f8d6f4f3b6722",
+  "status": "completed",
+  "conclusion": "success",
+  "html_url": "https://github.com/matteodev/reseller_manager/actions/runs/41111811672",
+  "event": "push",
+  "run_attempt": 1,
+  "artifacts": [
+    {
+      "id": 13004212114,
+      "name": "docker-test-output",
+      "size_in_bytes": 5456,
+      "expired": false
+    }
+  ],
+  "verification_date": "2026-10-30",
+  "source": "Public GitHub Actions REST API; this is metadata, not a copy of the remote log."
+}

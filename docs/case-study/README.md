@@ -71,10 +71,13 @@ per digest e WooCommerce per versione. Il [workflow Docker tests](../../.github/
 esegue lo stesso comando su push, pull request e avvio manuale; conserva il log come
 artifact per 14 giorni. Usa azioni ufficiali [checkout](https://github.com/actions/checkout)
 e [upload-artifact](https://github.com/actions/upload-artifact), fissate a commit.
-Il workflow è stato validato localmente con actionlint 1.7.7. La presenza del file
-non attesta un'esecuzione remota: verificarne l'esito nella
-[scheda Actions](https://github.com/matteodev/reseller_manager/actions/workflows/docker-tests.yml)
-dopo il push. Nessun badge verde o esito remoto è dato per acquisito.
+Il workflow è stato validato localmente con actionlint 1.7.7. L’[esecuzione remota
+41111811672](https://github.com/matteodev/reseller_manager/actions/runs/41111811672)
+è terminata con esito **success** sul commit `440ceae2624000f3bee86eeee74f8d6f4f3b6722`.
+L’artifact `docker-test-output` è stato verificato come presente e non scaduto al
+controllo del 30 ottobre 2026. I [metadati della verifica](ci-run.json) riportano
+revisione, esito e artifact; non sostituiscono il log remoto. Questo risultato
+riguarda quella revisione, non garantisce l’esito dei commit futuri.
 
 ## Riprodurre le schermate
 
